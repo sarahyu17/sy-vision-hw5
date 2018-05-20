@@ -22,13 +22,15 @@ class BaseModel(nn.Module):
         self.logFile.write(str + '\n')
 
     def criterion(self):
-        return nn.CrossEntropyLoss()
+        return nn.MSELoss()
+        #return nn.CrossEntropyLoss()
 
     def optimizer(self):
         return optim.SGD(self.parameters(), lr=0.001)
 
     def adjust_learning_rate(self, optimizer, epoch, args):
         lr = args.lr * pow(0.9, epoch / 50)  # TODO: Implement decreasing learning rate's rules
+        #lr = args.lr * pow(0.1, epoch / 50)
         for param_group in optimizer.param_groups:
             param_group['lr'] = lr
        

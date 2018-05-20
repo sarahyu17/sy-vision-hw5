@@ -7,6 +7,13 @@ import torch
 import pdb
 from tqdm import (tqdm, trange)
 
+def createLabelArray(labels):
+    m = np.zeros((labels.shape[0], 10))
+    for i in range(len(labels)):
+        m[i][labels[i]] = 1
+
+    return torch.FloatTensor(m)
+
 
 def train(net, dataloader, optimizer, criterion, epoch, device):
 
@@ -16,6 +23,7 @@ def train(net, dataloader, optimizer, criterion, epoch, device):
     for i, data in enumerate(tqdm(dataloader.trainloader, 0)):
         # get the inputs
         inputs, labels = data
+        labels = createLabelArray(labels)
         inputs, labels = inputs.to(device), labels.to(device)
         # zero the parameter gradients
         optimizer.zero_grad()
@@ -66,7 +74,7 @@ def test(net, dataloader, device, tag=''):
             outputs = net(images)
             _, predicted = torch.max(outputs, 1)
             c = (predicted == labels).squeeze()
-            for i in range(4):
+            for i in range(len(labels)):
                 label = labels[i]
                 class_correct[label] += c[i].item()
                 class_total[label] += 1
